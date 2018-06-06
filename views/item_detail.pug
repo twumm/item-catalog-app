@@ -1,0 +1,23 @@
+extends layout
+
+block content
+
+  h1= title
+
+  if item.category
+    h4= item.category.title
+  else
+    h4 No Category name
+
+  h5= item.title
+  p= item.description
+
+  p
+    a(href=item.url + '/delete')
+      button.btn.btn-danger(type='submit') Delete
+  p
+    a(href=item.url + '/update')
+      button.btn.btn-primary(type='submit') Edit
+
+  if error
+    p= error

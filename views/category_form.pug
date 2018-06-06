@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  h1= title
+  //- each user in users
+  p= userid
+  
+  //- Create new user form
+  form(method='POST' action='')
+    div.form-group
+      label(for='title') Title:
+      input#title.form-control(type='text' name='title' placeholder='Title' value=(undefined===category ? '' : category.title))
+    //- div.form-group
+    //-   label(for='user') User:
+    //-   select#user.form-control(type='select' name='user' required='true' placeholder='Select user')      
+    //-     each user in users
+    //-       option(value=user.id selected=(undefined===user ? false:'selected')) #{user.name}
+    if !category
+      button.btn.btn-primary(type='submit') Create Category
+    else
+      button.btn.btn-primary(type='submit') Update Category
+      
+  if errors
+    ul
+      for error in errors
+        li!= error.msg

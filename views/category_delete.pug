@@ -1,0 +1,20 @@
+extends layout
+
+block content
+
+  //- #{category.title}
+  h1= title
+  p #{category.user.id}
+  
+  p Are you sure you want to delete #{category.title}?
+
+  form(method='POST' action='')
+    div.form-group
+      p
+        button.btn.btn-danger(type='submit') Yes
+      p
+        a(href= category.url)
+          button.btn.btn-primary(type='submit') No
+  
+  if error
+    p= error

@@ -1,23 +1,38 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const express = require('express');
+const app = express();
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 
 // Set up mongoose connection.
-var mongoose = require('mongoose');
-var mongoDB = 'mongodb://127.0.0.1:27017/itemcatalog';
+const mongoose = require('mongoose');
+const mongoDB = 'mongodb://127.0.0.1:27017/itemcatalog';
 mongoose.connect(mongoDB);
 mongoose.Promise = global.Promise;
-var db = mongoose.connection;
+const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-// var index = require('./routes/index');
-// var users = require('./routes/users');
-var catalog = require('./routes/catalog');
+// Use sessions for tracking logins
+app.use(session({
+    secret: 'awesome',
+    resave: true,
+    saveUninitialized: false,
+    // cookie: {
+    //     maxAge: 600000
+    // },
+    store: new MongoStore({
+        mongooseConnection: db
+    })
+}));
 
-var app = express();
+const index = require('./routes/index');
+const users = require('./routes/users');
+// Import routes for "catalog" area of site
+const catalog = require('./routes/catalog');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -31,9 +46,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use('/', index);
-// app.use('/users', users);
-app.use('/', catalog);
+app.use('/', index);
+app.use('/users', users);
+app.use('/catalog', catalog);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

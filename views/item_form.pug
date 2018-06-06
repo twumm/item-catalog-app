@@ -1,0 +1,34 @@
+extends layout
+
+block content
+
+  h1= title
+
+  form(method='POST', action='')
+    div.form-group
+      label(for='title') Title:
+      input#title.form-control(type='text' placeholder='Title' name='title' required='true' value=(undefined===item ? '' : item.title))
+      label(for='title') Description:
+      input#description.form-control(type='text' placeholder='Description' name='description' required='true' value=(undefined===item ? '' : item.description))
+      label(for='category') Category:
+      select#category.form-control(type='select' name='category' required='true' placeholder='Select category')
+        each category in categories
+          if item
+            option(value=category.id 
+            selected=(
+              category._id.toString()==item.category._id 
+              || category._id.toString()==item.category
+            ) ? 'selected': false
+          ) #{category.title}
+          else
+            option(value=category._id) #{category.title}
+      //- br
+      //- label(for='user') User:
+      //-   select#user.form-control(type='select' name='user' required='true' placeholder='Select user')
+      //-     each user in users
+      //-       option(value=user.id selected=false) #{user.name}
+      br
+      if !item
+        button.btn.btn-primary(type='submit') Create Item
+      else
+        button.btn.btn-primary(type='submit') Update Item

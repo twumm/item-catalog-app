@@ -1,0 +1,29 @@
+extends layout
+
+block content
+  h1= title
+
+  h4 Title: #{category.title}
+
+  h5 Item list
+
+  ul
+  
+  each item in items
+    li
+      a(href=item.url) #{item.title}
+
+  else
+    li There are no items.
+  
+  br
+  //- if items
+  p
+    a(href=category.url+'/delete')
+      button.btn.btn-danger(type='submit') Delete 
+  p
+    a(href=category.url+'/update')
+      button.btn.btn-success(type='submit') Edit 
+
+  if error
+    p= error

@@ -1,0 +1,14 @@
+extends layout
+
+block content
+
+  h1= title
+
+  p Are you sure you want to delete #{item.title}?
+
+  form(method='POST')
+    a(href=item.url + '/delete')
+      button.btn.btn-primary(type='submit') Yes
+    br
+    a(href=item.url)
+      button.btn.btn-primary(type='submit') No
