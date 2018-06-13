@@ -87,7 +87,7 @@ exports.item_create_post = [
       item.save(function(err) {
         if (err) { return next(err); }
         // Successful, redirect to the new category
-        res.redirect(item.url);
+        res.redirect('/catalog/category/' + req.body.category);
       });
     }
   }
@@ -98,6 +98,7 @@ exports.item_delete_get = function(req, res, next) {
   Item.findById(req.params.id)
     .populate('user category')
     .exec(function(err, item) {
+      console.log(item.user);
       if (err) {
         return next(err);
       } else if (item.user.id !== req.session.userId) {
@@ -114,7 +115,9 @@ exports.item_delete_get = function(req, res, next) {
 // Handle Item delete on POST.
 exports.item_delete_post = function(req, res, next) {
   // Find and delete item
-  Item.findById(req.params.id).exec(function(err, item) {
+  Item.findById(req.params.id)
+    .populate('user')
+    .exec(function(err, item) {
       if (err) {
         return next(err);
       } else if (item.user.id === req.session.userId) {
@@ -124,7 +127,7 @@ exports.item_delete_post = function(req, res, next) {
           res.redirect('/catalog/items');
         });
       } else {
-        res.render('item_detail', { title: 'Delete item', item: item, error: 'You do not own this item.', userLoggedIn: req.session.userId });
+        res.render('item_detail', { title: 'Delete item', item: item, user: item.user, error: 'You do not own this item.', userLoggedIn: req.session.userId });
       }
     })
     // res.send('NOT IMPLEMENTED: Item delete POST');
