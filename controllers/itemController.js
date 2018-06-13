@@ -44,10 +44,14 @@ exports.item_create_get = function(req, res, next) {
       Category.find({}, 'title')
         .populate('user')
         .exec(callback);
+    },
+    user: function(callback) {
+      User.findById(req.session.userId)
+        .exec(callback);
     }
   }, function(err, results) {
     if (err) { return next(err); }
-    res.render('item_form', { title: 'Create item', categories: results.category, user: results.category.user, userLoggedIn: req.session.userId })
+    res.render('item_form', { title: 'Create item', categories: results.category, user: results.user, userLoggedIn: req.session.userId })
   });
 
   // res.send('NOT IMPLEMENTED: Item create GET');
