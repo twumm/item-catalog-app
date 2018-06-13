@@ -14,22 +14,36 @@ block content
   each item in items
     div(class='accordion mb-1' id='itemAccordion')
       div(class='card')
-        div(class='card-header' id=item.title+'heading')
+        div(class='card-header' id=item.title.split(" ")[0]+'heading')
           h5(class='mb-0')
-            button(class='btn btn-link' type='button' data-toggle='collapse' data-target='#'+item.title aria-expanded='true' aria-controls=item.title) #{item.title}
+            button(class='btn btn-link' type='button' data-toggle='collapse' data-target='#'+item.title.split(" ")[0] aria-expanded='true' aria-controls=item.title.split(" ")[0]) #{item.title}
           if item.user
             p(class='ml-3' style='font-size: 12px;') posted by: #[strong #{item.user.username}]
           else
             p(class='ml-3' style='font-size: 12px;') posted by: #[strong admin]
         
-        div(id=item.title class='collapse' aria-labelledby=item.title data-parent='#itemAccordion')
+        div(id=item.title.split(" ")[0] class='collapse' aria-labelledby=item.title.split(" ")[0]+'heading' data-parent='#itemAccordion')
           div(class='card-body') #{item.description}
           
           if item.user
             if userLoggedIn && userLoggedIn === item.user.id
               p(class='d-flex just ml-3')
-                a(href=item.url+'/delete')
-                  button.btn.btn-danger(type='submit' class='mr-2') Delete 
+                //- a(href=item.url+'/delete')
+                button.btn.btn-danger(type='button' class='mr-2' data-toggle='modal' data-target='#deleteModal') Delete
+                div.modal.fade(id='deleteModal' tabindex='-1' role='dialog' aria-labelledby='deleteModalLabel' aria-hidden='true')
+                  div.modal-dialog(role='document')
+                    div.modal-content
+                      div.modal-header
+                        h5.modal-title(id='deleteModalLabel') Another item about to go!
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                          span(aria-hidden='true') &times;
+                      div.modal-body Are you sure you want to delete #{item.title}
+                      div.modal-footer
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') No
+                        button.btn.btn-danger(type='submit') Yes
+
+
+
                 a(href=item.url+'/update')
                   button.btn.btn-success(type='submit') Edit
 
