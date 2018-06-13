@@ -1,22 +1,26 @@
 extends layout
 
 block content
-  h4(class='mt-5') #{title}
+  div(class='row mt-4')
+    div(class='col-md-8')
+      h4 #{title}
+    div(class='col-md-4 text-center')
+      a(href='/catalog/category/create') Create category
 
-    ul
-    div(class='row')
-      each category in category_list
-        div(class='col-lg-4 col-md-6 col-xs-6 d-flex justify-content-center')
-          div(class='card mb-5' style='width: 18rem;')
-            if userLoggedIn && userLoggedIn === category.user.id
-              button(type='button' class='close d-flex flex-row-reverse' aria-label='Close')
-                a(href='/catalog/category/' + category.id + '/delete')
-                  i(class='far fa-trash-alt mr-3' style='color:red;')
-                a(href='/catalog/category/' + category.id + '/update')
-                  i(class='far fa-edit mr-3')
-            a(href=category.url)
-              img(class='card-img-top' src='../images/infiniteloop.jpg' alt='image')
-              //- img(class='card-img-top' src='https://loremflickr.com/320/240/' + category.title alt='image')              
-              hr(class='m-0')
-              div(class='card-body')
-                h5(class='card-title') #{category.title}
+  ul
+  div(class='row')
+    each category in category_list
+      div(class='col-lg-4 col-md-6 col-xs-6 d-flex justify-content-center')
+        div(class='card mb-5' style='width: 18rem;')
+          if userLoggedIn && userLoggedIn === category.user.id
+            button(type='button' class='close d-flex flex-row-reverse' aria-label='Close')
+              a(href='/catalog/category/' + category.id + '/delete')
+                i(class='far fa-trash-alt mr-3' style='color:red;')
+              a(href='/catalog/category/' + category.id + '/update')
+                i(class='far fa-edit mr-3')
+          a(href=category.url)
+            img(class='card-img-top' src='../images/infiniteloop.jpg' alt='image')
+            //- img(class='card-img-top' src='https://loremflickr.com/320/240/' + category.title alt='image')              
+            hr(class='m-0')
+            div(class='card-body')
+              h5(class='card-title') #{category.title}
