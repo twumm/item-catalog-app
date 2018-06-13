@@ -27,8 +27,12 @@ html(lang='en')
               li(class='navbar-item')
                 a(href='/users/user/signup')  Sign up
             else
-              li(class='navbar-item') 
-                a(href='/users/user/logout') Logout
+              div()
+                a(class='dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false') #{user.first_name}
+                div(class='dropdown-menu')
+                  li(class='navbar-item') 
+                    a(href='/users/user/logout') Logout
+              
             
 
     div(class='container')
