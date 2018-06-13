@@ -94,7 +94,7 @@ exports.item_create_post = [
 ]
 
 // Display Item delete form on GET.
-exports.item_delete_get = function(req, res, next) {
+/*exports.item_delete_get = function(req, res, next) {
   Item.findById(req.params.id)
     .populate('user category')
     .exec(function(err, item) {
@@ -110,13 +110,13 @@ exports.item_delete_get = function(req, res, next) {
 
     });
   // res.send('NOT IMPLEMENTED: Item delete GET');
-};
+};*/
 
 // Handle Item delete on POST.
 exports.item_delete_post = function(req, res, next) {
   // Find and delete item
   Item.findById(req.params.id)
-    .populate('user')
+    .populate('user category')
     .exec(function(err, item) {
       if (err) {
         return next(err);
@@ -124,10 +124,13 @@ exports.item_delete_post = function(req, res, next) {
         Item.findByIdAndRemove(req.params.id, function deleteItem(err) {
           if (err) { return next(err); }
           // Successful, so render main items page
-          res.redirect('/catalog/items');
+          console.log('got to if in item delete post');
+          console.log(item.category._id);
+          res.redirect('/catalog/category/' + item.category._id);
         });
       } else {
-        res.render('item_detail', { title: 'Delete item', item: item, user: item.user, error: 'You do not own this item.', userLoggedIn: req.session.userId });
+        console.log('got to else in item delete post');
+        res.redirect('/catalog/category/' + item.category._id);
       }
     })
     // res.send('NOT IMPLEMENTED: Item delete POST');
