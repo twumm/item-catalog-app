@@ -17,17 +17,21 @@ block content
         div(class='card-header' id=item.title+'heading')
           h5(class='mb-0')
             button(class='btn btn-link' type='button' data-toggle='collapse' data-target='#'+item.title aria-expanded='true' aria-controls=item.title) #{item.title}
-          p(class='ml-3' style='font-size: 12px;') posted by: #[strong #{item.user.name}]
+          if item.user
+            p(class='ml-3' style='font-size: 12px;') posted by: #[strong #{item.user.username}]
+          else
+            p(class='ml-3' style='font-size: 12px;') posted by: #[strong admin]
         
         div(id=item.title class='collapse' aria-labelledby=item.title data-parent='#itemAccordion')
           div(class='card-body') #{item.description}
           
-          if userLoggedIn && userLoggedIn === item.user.id
-            p(class='d-flex just ml-3')
-              a(href=item.url+'/delete')
-                button.btn.btn-danger(type='submit' class='mr-2') Delete 
-              a(href=item.url+'/update')
-                button.btn.btn-success(type='submit') Edit
+          if item.user
+            if userLoggedIn && userLoggedIn === item.user.id
+              p(class='d-flex just ml-3')
+                a(href=item.url+'/delete')
+                  button.btn.btn-danger(type='submit' class='mr-2') Delete 
+                a(href=item.url+'/update')
+                  button.btn.btn-success(type='submit') Edit
 
 
   else
