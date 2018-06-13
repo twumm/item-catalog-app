@@ -46,10 +46,10 @@ router.get('/item/create', mid.requiresLogin, item_controller.item_create_get);
 router.post('/item/create', item_controller.item_create_post);
 
 // GET request to delete an item.
-router.get('/item/:id/delete', mid.requiresLogin, item_controller.item_delete_get);
+// router.get('/item/:id/delete', mid.requiresLogin, item_controller.item_delete_get);
 
 // POST request to delete an item.
-router.post('/item/:id/delete', item_controller.item_delete_post);
+router.post('/item/:id/delete', mid.requiresLogin, item_controller.item_delete_post);
 
 // GET request to update an item.
 router.get('/item/:id/update', mid.requiresLogin, item_controller.item_update_get);
