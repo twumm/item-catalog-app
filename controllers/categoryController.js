@@ -61,6 +61,10 @@ exports.category_detail = function(req, res, next) {
         .populate('user')
         .exec(callback);
     },
+    user: function(callback) {
+      User.findById(req.session.userId)
+        .exec(callback);
+    }
   }, function(err, results) {
     if (err) { return next(err); }
     if (results.category == null) { // No results.
@@ -69,7 +73,8 @@ exports.category_detail = function(req, res, next) {
       return next(err);
     }
     // Successful, so render
-    res.render('category_detail', { title: 'Category detail', category: results.category, items: results.item, user: results.category.user, userLoggedIn: req.session.userId });
+    console.log(results.item)
+    res.render('category_detail', { title: 'Category detail', category: results.category, items: results.item, user: results.user, userLoggedIn: req.session.userId });
   });
 };
 
