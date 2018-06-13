@@ -10,216 +10,226 @@ const { sanitizeBody } = require('express-validator/filter');
 
 // Site home page.
 exports.index = function(req, res, next) {
-    async.parallel({
-            category_count: function(callback) {
-                Category.count({}, callback); // Pass an empty object as match condition to find all documents of this collection
-            },
-            user_count: function(callback) {
-                User.count({}, callback);
-            },
-            item_count: function(callback) {
-                Item.count({}, callback);
-            }
-        }, function(err, results) {
-            res.render('index', { title: 'Item Catalog Home', error: err, data: results, userLoggedIn: req.session.userId });
-        })
-        // res.send('NOT IMPLEMENTED: Site Home Page');
+  async.parallel({
+      category_count: function(callback) {
+        Category.count({}, callback); // Pass an empty object as match condition to find all documents of this collection
+      },
+      user_count: function(callback) {
+        User.count({}, callback);
+      },
+      item_count: function(callback) {
+        Item.count({}, callback);
+      },
+      user: function(callback) {
+        User.findById(req.session.userId)
+          .exec(callback);
+      }
+    }, function(err, results) {
+      res.render('index', { title: 'Item Catalog Home', error: err, data: results, user: results.user, userLoggedIn: req.session.userId });
+    })
+    // res.send('NOT IMPLEMENTED: Site Home Page');
 }
 
 // Display list of all Categories.
 exports.category_list = function(req, res, next) {
-    Category.find({}, 'title user')
-        .populate('user')
-        .exec(function(err, list_categories) {
-            if (err) { return next(err); }
-            // Successful, so render
-            res.render('category_list', { title: 'Category List', category_list: list_categories, userLoggedIn: req.session.userId });
-        });
+  async.parallel({
+      categories: function(callback) {
+        Category.find({}, 'title user')
+          .exec(callback);
+      },
+      user: function(callback) {
+        User.findById(req.session.userId)
+          .exec(callback);
+      }
+    }, function(err, results) {
+      if (err) { return next(err); }
+      res.render('category_list', { title: 'Category List', category_list: results.categories, user: results.user, userLoggedIn: req.session.userId });
+    })
     // res.send('NOT IMPLEMENTED: Category list');
 };
 
 // Display detail page for a specific Category.
 exports.category_detail = function(req, res, next) {
-    async.parallel({
-        category: function(callback) {
-            Category.findById(req.params.id)
-                .populate('user')
-                .exec(callback);
-        },
-        item: function(callback) {
-            Item.find({ 'category': req.params.id })
-                .populate('user')
-                .exec(callback);
-        },
-    }, function(err, results) {
-        if (err) { return next(err); }
-        if (results.category == null) { // No results.
-            var err = new Error('Category not found');
-            err.status = 404;
-            return next(err);
-        }
-        // Successful, so render
-        res.render('category_detail', { title: 'Category detail', category: results.category, items: results.item, userLoggedIn: req.session.userId });
-    });
+  async.parallel({
+    category: function(callback) {
+      Category.findById(req.params.id)
+        .populate('user')
+        .exec(callback);
+    },
+    item: function(callback) {
+      Item.find({ 'category': req.params.id })
+        .populate('user')
+        .exec(callback);
+    },
+  }, function(err, results) {
+    if (err) { return next(err); }
+    if (results.category == null) { // No results.
+      var err = new Error('Category not found');
+      err.status = 404;
+      return next(err);
+    }
+    // Successful, so render
+    res.render('category_detail', { title: 'Category detail', category: results.category, items: results.item, user: results.category.user, userLoggedIn: req.session.userId });
+  });
 };
 
 // Display Category create form on GET.
 exports.category_create_get = function(req, res, next) {
-    User.findById(req.session.userId).exec(function(err, user) {
-        if (err) { return next(err); }
-        res.render('category_form', { title: 'Create category', user: user, userLoggedIn: req.session.userId });
-    })
+  User.findById(req.session.userId).exec(function(err, user) {
+    if (err) { return next(err); }
+    res.render('category_form', { title: 'Create category', user: user, userLoggedIn: req.session.userId });
+  })
 
-    // res.send('NOT IMPLEMENTED: Category create get');
+  // res.send('NOT IMPLEMENTED: Category create get');
 };
 
 // Handle Category create on POST.
 exports.category_create_post = [
 
-    // Validate field.
-    body('title', 'Title must not be empty.').isLength({ min: 1 }).trim(),
-    // body('user', 'User must not be empty.').isLength({ min: 1 }).trim(),
+  // Validate field.
+  body('title', 'Title must not be empty.').isLength({ min: 1 }).trim(),
+  // body('user', 'User must not be empty.').isLength({ min: 1 }).trim(),
 
-    // Sanitize field.
-    sanitizeBody('*').trim().escape(),
+  // Sanitize field.
+  sanitizeBody('*').trim().escape(),
 
-    // Process the request after validation and sanitization.
-    (req, res, next) => {
+  // Process the request after validation and sanitization.
+  (req, res, next) => {
 
-        // Extract the validation errors (if any) from the request.
-        const errors = validationResult(req);
+    // Extract the validation errors (if any) from the request.
+    const errors = validationResult(req);
 
-        // Create a new category item.
-        const category = new Category({
-            title: req.body.title,
-            user: req.session.userId
-        });
+    // Create a new category item.
+    const category = new Category({
+      title: req.body.title,
+      user: req.session.userId
+    });
 
-        // If there are errors. Render form again with sanitized values/error messages.
-        if (!errors.isEmpty()) {
-            res.render('category_form', { title: 'Create category', category: req.body, errors: errors.array(), userLoggedIn: req.session.userId });
-            return;
-        } else {
-            category.save(function(err) {
-                if (err) { return next(err); }
-                // Successful, redirect to the new category
-                res.redirect(category.url);
-            });
-        }
+    // If there are errors. Render form again with sanitized values/error messages.
+    if (!errors.isEmpty()) {
+      res.render('category_form', { title: 'Create category', category: req.body, errors: errors.array(), userLoggedIn: req.session.userId });
+      return;
+    } else {
+      category.save(function(err) {
+        if (err) { return next(err); }
+        // Successful, redirect to the new category
+        res.redirect(category.url);
+      });
     }
+  }
 
 ];
 // res.send('NOT IMPLEMENTED: Category create post');
 
 // Display Category delete form on GET.
 exports.category_delete_get = function(req, res, next) {
-    Category.findById(req.params.id, 'title')
-        .populate('user')
-        .exec(function(err, category) {
-            if (err) {
-                return next(err);
-            } else if (category.user.id !== req.session.userId) {
-                req.session.error = 'Cannot delete. You do not own this category.';
-                res.redirect('/catalog/category/' + category.id);
-                delete req.session.error;
-            } else {
-                res.render('category_delete', { title: 'Delete category', category: category, userLoggedIn: req.session.userId });
-            }
-        })
-        // res.send('NOT IMPLEMENTED: Category delete get');
+  Category.findById(req.params.id, 'title')
+    .populate('user')
+    .exec(function(err, category) {
+      if (err) {
+        return next(err);
+      } else if (category.user.id !== req.session.userId) {
+        req.session.error = 'Cannot delete. You do not own this category.';
+        res.redirect('/catalog/category/' + category.id);
+        delete req.session.error;
+      } else {
+        res.render('category_delete', { title: 'Delete category', category: category, user: category.user, userLoggedIn: req.session.userId });
+      }
+    })
+    // res.send('NOT IMPLEMENTED: Category delete get');
 };
 
 // Handle Category delete on POST.
 exports.category_delete_post = function(req, res, next) {
 
-    // Query for category and items in the category
-    async.parallel({
-        category: function(callback) {
-            Category.findById(req.params.id)
-                .populate('user')
-                .exec(callback);
-        },
-        items: function(callback) {
-            Item.find({ 'category': req.params.id })
-                .exec(callback);
-        }
-    }, function(err, results) {
-        if (err) return next(err);
+  // Query for category and items in the category
+  async.parallel({
+    category: function(callback) {
+      Category.findById(req.params.id)
+        .populate('user')
+        .exec(callback);
+    },
+    items: function(callback) {
+      Item.find({ 'category': req.params.id })
+        .exec(callback);
+    }
+  }, function(err, results) {
+    if (err) return next(err);
 
-        if (results.items.length > 0) { // If there is at least one item in the category
-            res.render('category_detail', { title: 'Category detail', category: results.category, items: results.items, userLoggedIn: req.session.userId })
-        } else if (results.category.user.id == req.session.userId) {
-            // No items in the category so proceed to delete
-            Category.findByIdAndRemove(req.params.id, function deleteCategory(err) {
-                if (err) { return next(err); }
-                // Deleted successfully so redirect
-                res.redirect('/catalog/categories')
-            });
-        } else {
-            res.render('category_delete', { title: 'Delete category', category: results.category, items: results.items, error: 'You are not the owner.', userLoggedIn: req.session.userId })
-        }
+    if (results.items.length > 0) { // If there is at least one item in the category
+      res.render('category_detail', { title: 'Category detail', category: results.category, items: results.items, user: results.category.user, userLoggedIn: req.session.userId })
+    } else if (results.category.user.id == req.session.userId) {
+      // No items in the category so proceed to delete
+      Category.findByIdAndRemove(req.params.id, function deleteCategory(err) {
+        if (err) { return next(err); }
+        // Deleted successfully so redirect
+        res.redirect('/catalog/categories')
+      });
+    } else {
+      res.render('category_delete', { title: 'Delete category', category: results.category, items: results.items, user: results.category.user, error: 'You are not the owner.', userLoggedIn: req.session.userId })
+    }
 
-    });
-    //res.send('NOT IMPLEMENTED: Category delete post');
+  });
+  //res.send('NOT IMPLEMENTED: Category delete post');
 };
 
 // Display Category update form on GET.
 exports.category_update_get = function(req, res, next) {
 
-    // Get the category and user details
-    async.parallel({
-        category: function(callback) {
-            Category.findById(req.params.id)
-                .populate('user')
-                .exec(callback);
-        },
-        item: function(callback) {
-            Item.find({ 'category': req.params.id })
-                .exec(callback);
-        }
-    }, function(err, results) {
-        if (err) {
-            return next(err);
-        } else if (results.category.user.id !== req.session.userId) {
-            res.render('category_detail', { title: 'Category detail', category: results.category, items: results.item, error: 'You do not own this category.', userLoggedIn: req.session.userId })
-        } else {
-            res.render('category_form', { title: 'Edit Category', category: results.category, users: results.user, userLoggedIn: req.session.userId });
-        }
-    });
-    // res.send('NOT IMPLEMENTED: Category update get');
+  // Get the category and user details
+  async.parallel({
+    category: function(callback) {
+      Category.findById(req.params.id)
+        .populate('user')
+        .exec(callback);
+    },
+    item: function(callback) {
+      Item.find({ 'category': req.params.id })
+        .exec(callback);
+    }
+  }, function(err, results) {
+    if (err) {
+      return next(err);
+    } else if (results.category.user.id !== req.session.userId) {
+      res.render('category_detail', { title: 'Category detail', category: results.category, user: results.category.user, items: results.item, error: 'You do not own this category.', userLoggedIn: req.session.userId })
+    } else {
+      res.render('category_form', { title: 'Edit Category', category: results.category, user: results.category.user, users: results.user, userLoggedIn: req.session.userId });
+    }
+  });
+  // res.send('NOT IMPLEMENTED: Category update get');
 };
 
 // Handle Category update on POST.
 exports.category_update_post = [
 
-    body('title', 'Title must not be empty.').isLength({ min: 1 }).trim(),
-    body('user', 'User must not be empty.').isLength({ min: 1 }).trim(),
+  body('title', 'Title must not be empty.').isLength({ min: 1 }).trim(),
+  body('user', 'User must not be empty.').isLength({ min: 1 }).trim(),
 
-    // Sanitize field.
-    sanitizeBody('*').trim().escape(),
+  // Sanitize field.
+  sanitizeBody('*').trim().escape(),
 
-    // Process the request
-    (req, res, next) => {
-        // Extract the validation errors (if any) from the request.
-        const errors = validationResult(req);
+  // Process the request
+  (req, res, next) => {
+    // Extract the validation errors (if any) from the request.
+    const errors = validationResult(req);
 
-        // Create a category with the updated values
-        const category = new Category({
-            title: req.body.title,
-            user: req.body.user,
-            _id: req.session.userId //This is required, or a new ID will be assigned!
-        });
+    // Create a category with the updated values
+    const category = new Category({
+      title: req.body.title,
+      user: req.body.user,
+      _id: req.session.userId //This is required, or a new ID will be assigned!
+    });
 
-        if (!errors.isEmpty()) {
-            res.render('category_form', { title: 'Create category', category: req.body, errors: errors.array(), userLoggedIn: req.session.userId });
-            return;
-        } else {
-            Category.findByIdAndUpdate(req.params.id, category, function(err, updatedCategory) {
-                if (err) { return next(err); }
-                // Successful so redirect to the updated item's page.
-                res.redirect(updatedCategory.url);
-            })
-        }
-
+    if (!errors.isEmpty()) {
+      res.render('category_form', { title: 'Create category', category: req.body, user: req.body.user, errors: errors.array(), userLoggedIn: req.session.userId });
+      return;
+    } else {
+      Category.findByIdAndUpdate(req.params.id, category, function(err, updatedCategory) {
+        if (err) { return next(err); }
+        // Successful so redirect to the updated item's page.
+        res.redirect(updatedCategory.url);
+      })
     }
+
+  }
 ];
