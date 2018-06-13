@@ -73,7 +73,6 @@ exports.category_detail = function(req, res, next) {
       return next(err);
     }
     // Successful, so render
-    console.log(results.item)
     res.render('category_detail', { title: 'Category detail', category: results.category, items: results.item, user: results.user, userLoggedIn: req.session.userId });
   });
 };
