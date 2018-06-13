@@ -14,8 +14,7 @@ block content
       div(class='col-lg-4 col-md-6 col-xs-6 d-flex justify-content-center')
         div(class='card mb-5' style='width: 18rem;')
           if userLoggedIn && userLoggedIn == category.user
-            //- button(type='button' class='close d-flex flex-row-reverse' aria-label='Close')
-            ul.list-inline.text-right
+            ul.list-inline.text-right.mb-0
               li.list-inline-item
                 a(href='/catalog/category/' + category.id + '/delete')
                   i(class='far fa-trash-alt mr-3' style='color:red;')
