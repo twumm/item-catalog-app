@@ -83,8 +83,6 @@ exports.category_create_get = function(req, res, next) {
     if (err) { return next(err); }
     res.render('category_form', { title: 'Create category', user: user, userLoggedIn: req.session.userId });
   })
-
-  // res.send('NOT IMPLEMENTED: Category create get');
 };
 
 // Handle Category create on POST.
@@ -117,7 +115,7 @@ exports.category_create_post = [
       category.save(function(err) {
         if (err) { return next(err); }
         // Successful, redirect to the new category
-        res.redirect(category.url);
+        res.redirect('/catalog/categories');
       });
     }
   }
