@@ -25,7 +25,7 @@ router.get('/category/:id/delete', mid.requiresLogin, category_controller.catego
 router.post('/category/:id/delete', category_controller.category_delete_post);
 
 // GET request to update a Category.
-router.get('/category/:id/update', category_controller.category_update_get);
+router.get('/category/:id/update', mid.requiresLogin, category_controller.category_update_get);
 
 // POST request to update a Category.
 router.post('/category/:id/update', category_controller.category_update_post);

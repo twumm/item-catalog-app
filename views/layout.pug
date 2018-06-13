@@ -2,40 +2,35 @@ doctype html
 html(lang='en')
   head
     title= title
+    //- Require meta tags
     meta(charset='utf-8')
-    meta(name='viewport', content='width=device-width, initial-scale=1')
-    link(rel='stylesheet', href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css')
-    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js')
-    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    meta(name='viewport' content='width=device-width, initial-scale=1')
+    link(rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' integrity='sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm' crossorigin="anonymous")
+    script(src='https://code.jquery.com/jquery-3.2.1.slim.min.js' integrity='sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN' crossorigin='anonymous')
+    script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js' integrity='sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl' crossorigin='anonymous')
+    script(defer src='https://use.fontawesome.com/releases/v5.0.8/js/all.js')
+    link(rel='stylesheet' href='/stylesheets/style.css')
+  
   body
-    div(class='container-fluid')
-      div(class='row')
-        div(class='col-sm-2')
-          block sidebar
-            ul(class='sidebar-nav')
-              li 
-                a(href='/catalog') Home
-              li 
-                a(href='/catalog/categories') All categories
-              li 
-                a(href='/users/users') All users
-              li 
-                a(href='/catalog/items') All items
-              li 
-                hr
-              li 
+    nav(class='navbar navbar-light bg-light navbar-expand-lg border-bottom')
+      div(class='container')
+        a(href='/') Item Catalog
+        button(class='navbar-toggler' data-toggle='collapse' data-target='#navbarCollapse')
+          span(class='navbar-toggler-icon')
+        div(class='collapse navbar-collapse' id='navbarCollapse')
+          ul(class='navbar-nav ml-auto')
+            //- li(class='navbar-item active') User 
+            if !userLoggedIn
+              li(class='navbar-item') 
                 a(href='/users/user/login') Login
-              li 
-                a(href='/users/user/signup') Signup
-              li 
-                a(href='/catalog/category/create') Create new category
-              li 
-                a(href='/catalog/item/create') Create new item
-              //- if userId
-              li 
+                | / 
+              li(class='navbar-item')
+                a(href='/users/user/signup')  Sign up
+            else
+              li(class='navbar-item') 
                 a(href='/users/user/logout') Logout
+            
 
-                
-        div(class='col-sm-10')
-          block content
+    div(class='container')
+      block content
+          

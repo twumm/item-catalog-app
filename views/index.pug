@@ -1,17 +1,22 @@
 extends layout
 
 block content
-  h1= title
+  //- div(class='row')
+  h2= title
+
   p Welcome to #[em Item Catalog App], a very basic Express CRUD website.
+  
+  h3 Usage stats
 
-  h1 Dynamic content
-
+  //- div(class='row')
   if error
     p Error getting dynamic content.
   else
     p The catalog has the following record counts:
 
-    ul
-      li #[strong Users:] !{data.user_count}
-      li #[strong Categories:] !{data.category_count}
-      li #[strong Items:] !{data.item_count}
+      ul
+        li #[strong Users:] !{data.user_count}
+        li
+          a(href='/catalog/categories') #[strong Categories:] !{data.category_count}
+        li
+          a(href='/catalog/items') #[strong Items:] !{data.item_count}
