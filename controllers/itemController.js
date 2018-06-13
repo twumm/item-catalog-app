@@ -124,8 +124,6 @@ exports.item_delete_post = function(req, res, next) {
         Item.findByIdAndRemove(req.params.id, function deleteItem(err) {
           if (err) { return next(err); }
           // Successful, so render main items page
-          console.log('got to if in item delete post');
-          console.log(item.category._id);
           res.redirect('/catalog/category/' + item.category._id);
         });
       } else {
@@ -176,8 +174,6 @@ exports.item_update_post = [
   // Validate fields
   body('title', 'Title must not be empty').isLength({ min: 1 }).trim(),
   body('description', 'Description must not be empty').isLength({ min: 1 }).trim(),
-  body('category', 'Category must not be empty').isLength({ min: 1 }).trim(),
-  body('user', 'User must not be empty').isLength({ min: 1 }).trim(),
 
   // Sanitize fields.
   sanitizeBody('*').trim().escape(),
@@ -188,28 +184,38 @@ exports.item_update_post = [
     // Get errors from the validation.
     const errors = validationResult(req);
 
-    // Create an item variable to store the updates.
-    const item = new Item({
-      title: req.body.title,
-      description: req.body.description,
-      category: req.body.category,
-      user: req.body.item,
-      _id: req.params.id
-    });
-
-    // Check for errors from validation
-    if (!errors.isEmpty()) { // There were errors in the form so send user back with errors
-      res.render('item_form', { title: 'Error in update', item: req.body.item, category: req.body.category, user: req.body.user, errors: errors.array(), userLoggedIn: req.session.userId });
-    } else {
-      // Proceed to update the item
-      Item.findByIdAndUpdate(req.params.id, item, function(err, updatedItem) {
-        if (err) { return next(err); }
-        // Successful, so redirect item with updates
-        res.redirect(updatedItem.url);
+    // Get item with category
+    Item.findById(req.params.id)
+      .populate('category user')
+      .exec(function(err, item) {
+        if (err) {
+          return next(err)
+        } else {
+          // Create an item variable to store the updates.
+          const itemData = new Item({
+            title: req.body.title,
+            description: req.body.description,
+            category: item.category,
+            user: item.user,
+            _id: req.params.id
+          });
+          // Check for errors from validation
+          if (!errors.isEmpty()) { // There were errors in the form so send user back with errors.
+            res.redirect('/catalog/category/' + item.category._id);
+          } else {
+            // Proceed to update the item
+            Item.findByIdAndUpdate(req.params.id, itemData, function(err, updatedItem) {
+              if (err) { return next(err); }
+              // Successful, so redirect item with updates.
+              res.redirect('/catalog/category/' + item.category._id);
+            });
+          }
+        }
       });
-    }
+
+
   }
-]
+];
 
 /*function(req, res, next) {
     res.send('NOT IMPLEMENTED: Item update POST');
