@@ -27,24 +27,47 @@ block content
           
           if item.user
             if userLoggedIn && userLoggedIn === item.user.id
-              p(class='d-flex just ml-3')
+              //- p(class='d-flex just ml-3')
+              ul.list-inline
                 //- a(href=item.url+'/delete')
-                button.btn.btn-danger(type='button' class='mr-2' data-toggle='modal' data-target='#deleteModal') Delete
-                div.modal.fade(id='deleteModal' tabindex='-1' role='dialog' aria-labelledby='deleteModalLabel' aria-hidden='true')
-                  div.modal-dialog(role='document')
-                    div.modal-content
-                      div.modal-header
-                        h5.modal-title(id='deleteModalLabel') Another item about to go!
-                        button.close(type='button' data-dismiss='modal' aria-label='Close')
-                          span(aria-hidden='true') &times;
-                      div.modal-body Are you sure you want to delete #{item.title}
-                      div.modal-footer
-                        button.btn.btn-secondary(type='button' data-dismiss='modal') No
-                        button.btn.btn-danger(type='submit') Yes
+                li.list-inline-item.ml-3
+                  button.btn.btn-outline-danger(type='button' class='mr-2' data-toggle='modal' data-target='#'+item.title.split(" ")[0]+'DeleteModal') Delete
+                  div.modal.fade(id=item.title.split(" ")[0]+'DeleteModal' tabindex='-1' role='dialog' aria-labelledby=item.title.split(" ")[0]+'Label' aria-hidden='true')
+                    div.modal-dialog(role='document')
+                      div.modal-content
+                        div.modal-header
+                          h5.modal-title(id=item.title.split(" ")[0]+'Label') Another item about to go!
+                          button.close(type='button' data-dismiss='modal' aria-label='Close')
+                            span(aria-hidden='true') &times;
+                        div.modal-body Are you sure you want to delete #{item.title}
+                        div.modal-footer
+                          button.btn.btn-secondary(type='button' data-dismiss='modal') No
+                          form(method='POST' action='/catalog/item/' + item.id + '/delete')
+                            //- a(href=)
+                            button.btn.btn-danger(type='submit') Yes
+                li.list-inline-item    
+                  button.btn.btn-outline-danger(type='button' data-toggle='modal' data-target='#'+item.title.split(" ")[0]+'EditModal') Edit
+                  div.modal.fade(id=item.title.split(" ")[0]+'EditModal' tabindex='-1' role='dialog' aria-labelledby=item.title.split(" ")[0]+'EditLabel' aria-hidden='true')
+                    div.modal-dialog(role='document')
+                      div.modal-content
+                        div.modal-header
+                          h5.modal-title(id=item.title.split(" ")[0]+'EditLabel') Edit away!
+                          button.close(type='button' data-dismiss='modal' aria-label='Close')
+                            span(aria-hidden='true') &times;
+                        div.modal-body You are editing #{item.title}
+                          form(method='POST', action='/catalog/item/' + item.id + '/update')
+                            div.form-group
+                              label(for='title') Title:
+                              input#title.form-control(type='text' placeholder='Title' name='title' required='true' value=(undefined===item ? '' : item.title))
+                              label(for='title') Description:
+                              input#description.form-control(type='text' placeholder='Description' name='description' required='true' value=(undefined===item ? '' : item.description))
+                              label.mt(for='category') Category:
+                              input#category.form-control(type='text' placeholder='' name='category' required='true' value=category.title disabled)
+                            div.modal-footer
+                              button.btn.btn-secondary(type='button' data-dismiss='modal') Cancel
+                              button.btn.btn-danger(type='submit') Yes
 
-
-
-                a(href=item.url+'/update')
+                //- a(href=item.url+'/update')
                   button.btn.btn-success(type='submit') Edit
 
   else
