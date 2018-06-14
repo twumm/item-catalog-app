@@ -159,7 +159,7 @@ exports.category_delete_post = function(req, res, next) {
     if (err) return next(err);
 
     if (results.items.length > 0) { // If there is at least one item in the category
-      res.render('category_detail', { title: 'Category detail', category: results.category, items: results.items, user: results.category.user, userLoggedIn: req.session.userId })
+      res.redirect('/catalog/categories')
     } else if (results.category.user.id == req.session.userId) {
       // No items in the category so proceed to delete
       Category.findByIdAndRemove(req.params.id, function deleteCategory(err) {
@@ -168,7 +168,7 @@ exports.category_delete_post = function(req, res, next) {
         res.redirect('/catalog/categories')
       });
     } else {
-      res.render('category_delete', { title: 'Delete category', category: results.category, items: results.items, user: results.category.user, error: 'You are not the owner.', userLoggedIn: req.session.userId })
+      res.redirect('/catalog/categories')
     }
 
   });
