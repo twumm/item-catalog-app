@@ -16,8 +16,23 @@ block content
           if userLoggedIn && userLoggedIn == category.user
             ul.list-inline.text-right.mb-0
               li.list-inline-item
-                a(href='/catalog/category/' + category.id + '/delete')
-                  i(class='far fa-trash-alt mr-3' style='color:red;')
+                a(href='#' data-toggle='modal' data-target='#'+category.title.split(" ")[0]+'DeleteModal')
+                  i(class='far fa-trash-alt mr-3' style='color:red;' )
+                div.modal.fade(id=category.title.split(" ")[0]+'DeleteModal' tabindex='-1' role='dialog' aria-labelledby=category.title.split(" ")[0]+'Label' aria-hidden='true')
+                  div.modal-dialog(role='document')
+                    div.modal-content
+                      div.modal-header
+                        h5.modal-title(id=category.title.split(" ")[0]+'Label') Another category about to go!
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                          span(aria-hidden='true') &times;
+                      div.modal-body.text-left Are you sure you want to delete #{category.title}
+                      div.modal-footer
+                        button.btn.btn-secondary(type='button' data-dismiss='modal') No
+                        form(method='POST' action='/catalog/category/' + category.id + '/delete')
+                          //- a(href=)
+                          button.btn.btn-danger(type='submit') Yes
+
+
               li.list-inline-item
                 a(href='/catalog/category/' + category.id + '/update')
                   i(class='far fa-edit mr-3')
