@@ -205,7 +205,7 @@ exports.category_update_get = function(req, res, next) {
 exports.category_update_post = [
 
   body('title', 'Title must not be empty.').isLength({ min: 1 }).trim(),
-  body('user', 'User must not be empty.').isLength({ min: 1 }).trim(),
+  // body('user', 'User must not be empty.').isLength({ min: 1 }).trim(),
 
   // Sanitize field.
   sanitizeBody('*').trim().escape(),
@@ -215,23 +215,31 @@ exports.category_update_post = [
     // Extract the validation errors (if any) from the request.
     const errors = validationResult(req);
 
-    // Create a category with the updated values
-    const category = new Category({
-      title: req.body.title,
-      user: req.body.user,
-      _id: req.session.userId //This is required, or a new ID will be assigned!
-    });
-
-    if (!errors.isEmpty()) {
-      res.render('category_form', { title: 'Create category', category: req.body, user: req.body.user, errors: errors.array(), userLoggedIn: req.session.userId });
-      return;
-    } else {
-      Category.findByIdAndUpdate(req.params.id, category, function(err, updatedCategory) {
-        if (err) { return next(err); }
-        // Successful so redirect to the updated item's page.
-        res.redirect(updatedCategory.url);
-      })
-    }
-
+    // Query category from db.
+    Category.findById(req.params.id)
+      .populate('user')
+      .exec(function(err, category) {
+        if (err) {
+          return next(err)
+        } else {
+          // Create a category with the updated values
+          const categoryUpdate = new Category({
+            title: req.body.title,
+            user: category.user,
+            _id: category.id //This is required, or a new ID will be assigned!
+          });
+          // Check for errors in validation form
+          if (!errors.isEmpty()) {
+            res.redirect('/catalog/categories');
+            return;
+          } else {
+            Category.findByIdAndUpdate(req.params.id, categoryUpdate, function(err, updatedCategory) {
+              if (err) { return next(err); }
+              // Successful so redirect to the updated item's page.
+              res.redirect('/catalog/categories');
+            });
+          }
+        }
+      });
   }
 ];
