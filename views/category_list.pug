@@ -15,6 +15,7 @@ block content
         div(class='card mb-5' style='width: 18rem;')
           if userLoggedIn && userLoggedIn == category.user
             ul.list-inline.text-right.mb-0
+              
               li.list-inline-item
                 a(href='#' data-toggle='modal' data-target='#'+category.title.split(" ")[0]+'DeleteModal')
                   i(class='far fa-trash-alt mr-3' style='color:red;' )
@@ -31,11 +32,25 @@ block content
                         form(method='POST' action='/catalog/category/' + category.id + '/delete')
                           //- a(href=)
                           button.btn.btn-danger(type='submit') Yes
-
-
               li.list-inline-item
-                a(href='/catalog/category/' + category.id + '/update')
+                a(href='#' data-toggle='modal' data-target='#'+category.title.split(" ")[0]+'EditModal')
                   i(class='far fa-edit mr-3')
+                div.modal.fade(id=category.title.split(" ")[0]+'EditModal' tabindex='-1' role='dialog' aria-labelledby=category.title.split(" ")[0]+'Label' aria-hidden='true')
+                  div.modal-dialog(role='document')
+                    div.modal-content
+                      div.modal-header
+                        h5.modal-title(id=category.title.split(" ")[0]+'Label') Begin edit!
+                        button.close(type='button' data-dismiss='modal' aria-label='Close')
+                          span(aria-hidden='true') &times;
+                      div.modal-body.text-left
+                        form(method='POST', action='/catalog/category/' + category.id + '/update')
+                          div.form-group
+                            label(for='title') Title:
+                            input#title.form-control(type='text' placeholder=category.title name='title' required='true' value=(undefined===category ? '' : category.title))
+                          div.modal-footer
+                            button.btn.btn-secondary(type='button' data-dismiss='modal') No
+                            button.btn.btn-danger(type='submit') Update
+
           a(href=category.url)
             img(class='card-img-top' src='../images/infiniteloop.jpg' alt='image')
             //- img(class='card-img-top' src='https://loremflickr.com/320/240/' + category.title alt='image')              
