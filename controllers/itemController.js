@@ -66,7 +66,7 @@ exports.item_create_post = [
   body('category', 'Category must not be empty').isLength({ min: 1 }).trim(),
 
   // Sanitize all fields with the wildcard
-  sanitizeBody('*').trim().escape(),
+  sanitizeBody('*'),
 
   // Process the request
   (req, res, next) => {
@@ -176,7 +176,7 @@ exports.item_update_post = [
   body('description', 'Description must not be empty').isLength({ min: 1 }).trim(),
 
   // Sanitize fields.
-  sanitizeBody('*').trim().escape(),
+  sanitizeBody('*'),
 
   // Process the request.
   (req, res, next) => {
