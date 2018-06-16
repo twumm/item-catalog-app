@@ -93,7 +93,7 @@ exports.category_create_post = [
   // body('user', 'User must not be empty.').isLength({ min: 1 }).trim(),
 
   // Sanitize field.
-  sanitizeBody('*').trim().escape(),
+  sanitizeBody('*'),
 
   // Process the request after validation and sanitization.
   (req, res, next) => {
@@ -208,7 +208,7 @@ exports.category_update_post = [
   // body('user', 'User must not be empty.').isLength({ min: 1 }).trim(),
 
   // Sanitize field.
-  sanitizeBody('*').trim().escape(),
+  sanitizeBody('*'),
 
   // Process the request
   (req, res, next) => {
