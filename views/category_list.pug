@@ -17,13 +17,13 @@ block content
             ul.list-inline.text-right.mb-0
               
               li.list-inline-item
-                a(href='#' data-toggle='modal' data-target='#'+category.title.split(" ")[0]+'DeleteModal')
+                a(href='#' data-toggle='modal' data-target='#'+category.id+'DeleteModal')
                   i(class='far fa-trash-alt mr-3' style='color:red;' )
-                div.modal.fade(id=category.title.split(" ")[0]+'DeleteModal' tabindex='-1' role='dialog' aria-labelledby=category.title.split(" ")[0]+'Label' aria-hidden='true')
+                div.modal.fade(id=category.id+'DeleteModal' tabindex='-1' role='dialog' aria-labelledby=category.id+'Label' aria-hidden='true')
                   div.modal-dialog(role='document')
                     div.modal-content
                       div.modal-header
-                        h5.modal-title(id=category.title.split(" ")[0]+'Label') Another category about to go!
+                        h5.modal-title(id=category.id+'Label') Another category about to go!
                         button.close(type='button' data-dismiss='modal' aria-label='Close')
                           span(aria-hidden='true') &times;
                       div.modal-body.text-left Are you sure you want to delete #{category.title}
@@ -33,13 +33,13 @@ block content
                           //- a(href=)
                           button.btn.btn-danger(type='submit') Yes
               li.list-inline-item
-                a(href='#' data-toggle='modal' data-target='#'+category.title.split(" ")[0]+'EditModal')
+                a(href='#' data-toggle='modal' data-target='#'+category.id+'EditModal')
                   i(class='far fa-edit mr-3')
-                div.modal.fade(id=category.title.split(" ")[0]+'EditModal' tabindex='-1' role='dialog' aria-labelledby=category.title.split(" ")[0]+'Label' aria-hidden='true')
+                div.modal.fade(id=category.id+'EditModal' tabindex='-1' role='dialog' aria-labelledby=category.id+'Label' aria-hidden='true')
                   div.modal-dialog(role='document')
                     div.modal-content
                       div.modal-header
-                        h5.modal-title(id=category.title.split(" ")[0]+'Label') Begin edit!
+                        h5.modal-title(id=category.id+'Label') Begin edit!
                         button.close(type='button' data-dismiss='modal' aria-label='Close')
                           span(aria-hidden='true') &times;
                       div.modal-body.text-left
