@@ -35,6 +35,7 @@ exports.category_list = function(req, res, next) {
   async.parallel({
       categories: function(callback) {
         Category.find({}, 'title user')
+          .sort({ user: -1 })
           .exec(callback);
       },
       user: function(callback) {
