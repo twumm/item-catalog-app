@@ -46,7 +46,7 @@ exports.user_signup_post = [
         if (err) { return next(err); }
         // Successful so redirect to user profile/details.
         req.session.userId = user._id;
-        res.redirect(user.url);
+        res.redirect('/catalog');
       });
     }
   }
@@ -62,7 +62,7 @@ exports.user_login_get = function(req, res, next) {
 exports.user_login_post = [
 
   // Validate fields.
-  body('email', 'Email must not be empty').isLength({ min: 1 }).trim(),
+  body('userDetail', 'Email must not be empty').isLength({ min: 1 }).trim(),
   // body('password', 'Password must not be empty').isLength({ min: 1 }),
 
   // Sanitize values.
@@ -76,7 +76,7 @@ exports.user_login_post = [
 
     // Create user object with the data entered.
     const userData = new User({
-      email: req.body.email,
+      userDetail: req.body.userDetail,
       password: req.body.password
     });
 
@@ -85,7 +85,7 @@ exports.user_login_post = [
       // There are errors so render form with the values.
       res.render('user_login', { title: 'Login error34', user: userData, errors: errors });
     } else {
-      User.authenticate(req.body.email, req.body.password, function(error, user) {
+      User.authenticate(req.body.userDetail, req.body.password, function(error, user) {
         if (error || !user) {
           // const err = new Error('Wrong email or password.');
           // err.status.401
@@ -93,7 +93,7 @@ exports.user_login_post = [
           // return next(err);
         } else {
           req.session.userId = user._id;
-          res.redirect('/');
+          res.redirect('/catalog');
         }
       })
     }
