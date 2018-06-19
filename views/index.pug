@@ -4,9 +4,9 @@ block content
   //- div(class='row')
   h2= title
 
-  p Welcome to #[em Item Catalog App], a very basic Express CRUD website.
+  p Welcome to another #[em Item Catalog App], a basic Express CRUD website.
   
-  h3 Usage stats
+  h3 App stats
 
   //- div(class='row')
   if error
@@ -18,5 +18,4 @@ block content
         li #[strong Users:] !{data.user_count}
         li
           a(href='/catalog/categories') #[strong Categories:] !{data.category_count}
-        li
-          a(href='/catalog/items') #[strong Items:] !{data.item_count}
+        li #[strong Items:] !{data.item_count}
