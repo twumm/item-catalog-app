@@ -28,7 +28,12 @@ html(lang='en')
               li(class='navbar-item')
                 a(href='/users/user/signup')  Sign up
             else
-              div()
+              div.btn-group
+                button.btn.btn-outline-secondary.dropdown-toggle(type='button' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false') #{user.first_name}
+                div.dropdown-menu.dropdown-menu-center
+                  a(href='/users/user/logout')
+                    button.dropdown-item(type='button') Logout
+              //- div()
                 a(class='dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false') #{user.first_name}
                 div(class='dropdown-menu')
                   li(class='navbar-item') 
