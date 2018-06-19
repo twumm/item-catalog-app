@@ -12,8 +12,8 @@ const UserSchema = new Schema({
 });
 
 // Authenticate the input against database.
-UserSchema.statics.authenticate = function(email, password, callback) {
-  User.findOne({ email: email })
+UserSchema.statics.authenticate = function(userInput, password, callback) {
+  User.findOne({ $or: [{ username: userInput }, { email: userInput }] })
     .exec(function(err, user) {
       if (err) {
         return callback(err);
@@ -22,7 +22,7 @@ UserSchema.statics.authenticate = function(email, password, callback) {
         err.status = 401;
         return callback(err);
       }
-      // Compare the password in the db to the password the user provides.
+      // Compare the password in the db to the password the user entered.
       bcrypt.compare(password, user.password, function(err, result) {
         if (result === true) {
           return callback(null, user);
@@ -30,7 +30,7 @@ UserSchema.statics.authenticate = function(email, password, callback) {
           return callback();
         }
       })
-    });
+    })
 }
 
 // Virtual property for user's fullname
